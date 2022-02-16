@@ -1,8 +1,8 @@
 ---
-title: Delphi HTML Parser
+title: DataGridView VirtualMode
 description: simple example DataGridView in VirtualMode with SQLite.  
 author: sandbil
-tags: C# DataGridView VirtualMode
+tags: C# DataGridView VirtualMode Just-In-Time Data Loading
 
 ---
 DataGridView VirtualMode example with some of diagnostic capability
