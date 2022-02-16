@@ -19,7 +19,7 @@ namespace VirtualJustInTimeDemoGrid
         {
             InitializeComponent();
             if (DesignMode) return;
-            //dataGridView1.Rows.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(this.DataGridViewRowCollection1_CollectionChanged);
+            dataGridView1.Rows.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(this.DataGridViewRowCollection1_CollectionChanged);
 
             //dataGridView1.Rows..GetFirstRow
         }
@@ -130,9 +130,9 @@ namespace VirtualJustInTimeDemoGrid
             {
                 int rowid = Convert.ToInt32(dataGridView1.CurrentRow.Cells["rowid"].Value);
                 int curInd = dataGridView1.CurrentRow.Index;
-                Debug.WriteLine("(before update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
                 retriever.UpdateSQLiteRow(updatePrms, rowid);
                 memoryCache.RefreshPage(curInd);
+                Debug.WriteLine("(before update RowCount) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
                 dataGridView1.RowCount = memoryCache.AllRowCount;
                 dataGridView1.Refresh();
                 Debug.WriteLine("(after update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
@@ -140,8 +140,8 @@ namespace VirtualJustInTimeDemoGrid
             }
             catch (Exception ex)
             {
-                // Debug.Assert(false, ex.Message);
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
 
         }
@@ -175,8 +175,9 @@ namespace VirtualJustInTimeDemoGrid
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            Debug.WriteLine("(SelectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow.Index);
-            CurrentChanged(sender, e);
+            Debug.WriteLine("(SelectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
+            if (CurrentRowIndex != null)
+                CurrentChanged(sender, e);
         }
 
         private void dataGridView1_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
@@ -204,26 +205,12 @@ namespace VirtualJustInTimeDemoGrid
 
         private void DataGridViewRowCollection1_CollectionChanged(Object sender, CollectionChangeEventArgs e)
         {
-
-            Debug.WriteLine("(SelectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.Element);
-            System.Text.StringBuilder messageBoxCS = new System.Text.StringBuilder();
-            messageBoxCS.AppendFormat("{0} = {1}", "Action", e.Action);
-            messageBoxCS.AppendLine();
-            messageBoxCS.AppendFormat("{0} = {1}", "Element", e.Element);
-            messageBoxCS.AppendLine();
-            //MessageBox.Show(messageBoxCS.ToString(), "CollectionChanged Event");
+            Debug.WriteLine("(CollectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.Element);
         }
 
         private void dataGridView1_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
         {
             Debug.WriteLine("(RowsRemoved) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.RowIndex);
-
-            //System.Text.StringBuilder messageBoxCS = new System.Text.StringBuilder();
-            /*messageBoxCS.AppendFormat("{0} = {1}", "Action", e.Action);
-            messageBoxCS.AppendLine();
-            messageBoxCS.AppendFormat("{0} = {1}", "Element", e.Element);
-            messageBoxCS.AppendLine();
-            MessageBox.Show(messageBoxCS.ToString(), "CollectionChanged Event");*/
         }
     }
 }
