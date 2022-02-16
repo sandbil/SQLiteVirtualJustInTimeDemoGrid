@@ -21,13 +21,12 @@ namespace VirtualJustInTimeDemoGrid
             if (DesignMode) return;
             dataGridView1.Rows.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(this.DataGridViewRowCollection1_CollectionChanged);
 
-            //dataGridView1.Rows..GetFirstRow
         }
 
         public int rowPerPage = 15;
 
         private Cache memoryCache;
-        private DataRetriever retriever;
+        private SQLiteDataStore sqliteDS;
         private string connectionString;
         private string table;
         private string[] _fields;
@@ -74,12 +73,12 @@ namespace VirtualJustInTimeDemoGrid
         {
             Debug.WriteLine("(Open before) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
             connectionString = connectionStr; table = openTable; _fields = fields; filter = filterStr;
-            retriever = new DataRetriever(connectionString, table, _fields, filter);
-            memoryCache = new Cache(retriever, rowPerPage);
+            sqliteDS = new SQLiteDataStore(connectionString, table, _fields, filter);
+            memoryCache = new Cache(sqliteDS, rowPerPage);
             MemCache = memoryCache;
             //dataGridView1.RowCount = 0;
             dataGridView1.Rows.Clear();
-            dataGridView1.RowCount = retriever.RowCount;
+            dataGridView1.RowCount = sqliteDS.RowCount;
             dataGridView1.Refresh();
             Debug.WriteLine("(Open after) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
 
@@ -130,7 +129,7 @@ namespace VirtualJustInTimeDemoGrid
             {
                 int rowid = Convert.ToInt32(dataGridView1.CurrentRow.Cells["rowid"].Value);
                 int curInd = dataGridView1.CurrentRow.Index;
-                retriever.UpdateSQLiteRow(updatePrms, rowid);
+                sqliteDS.UpdateSQLiteRow(updatePrms, rowid);
                 memoryCache.RefreshPage(curInd);
                 Debug.WriteLine("(before update RowCount) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
                 dataGridView1.RowCount = memoryCache.AllRowCount;
@@ -191,7 +190,7 @@ namespace VirtualJustInTimeDemoGrid
                 else
                 {
                     int rowid = Convert.ToInt32(e.Row.Cells["rowid"].Value);
-                    retriever.DeleteSQLiteRow(rowid);
+                    sqliteDS.DeleteSQLiteRow(rowid);
                     memoryCache.RefreshPage(e.Row.Index);
                     Debug.WriteLine("(UserDeletingRow) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.Row.Index);
                 }

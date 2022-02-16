@@ -27,10 +27,10 @@ namespace SQLiteVirtualJustInTimeDemoGrid
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            DataRetriever retriever = new DataRetriever(connectionString, table, fields, filterStr);
-            retriever.DropTable();
-            retriever.CreateTable();
-            retriever.LoadTestData();
+            SQLiteDataStore sqliteDS = new SQLiteDataStore(connectionString, table, fields, filterStr);
+            sqliteDS.DropTable();
+            sqliteDS.CreateTable();
+            sqliteDS.LoadTestData();
             virtualJustInTimeDemoGrid1.AddColumns(fields);
             virtualJustInTimeDemoGrid1.Open(connectionString, table, fields, filterStr);
 
