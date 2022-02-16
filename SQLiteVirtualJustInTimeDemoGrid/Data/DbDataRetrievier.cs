@@ -155,10 +155,17 @@ namespace VirtualJustInTimeDemoGrid
             command.CommandText = String.Format("insert into {0} ({1}) values ({2});", tableName, String.Join(", ", insertFields), "'" + String.Join("', '", insertData) + "'");
             command.ExecuteNonQuery();
         }
-        public void UpdateSQLiteRow(SQLiteParameter[] updatePrms, string[] updatePairs, int rowid)
+        public void UpdateSQLiteRow(string[,] updatePrms, int rowid)
         {
-            command.CommandText = String.Format("update {0} set {1} WHERE rowid = {2};", tableName, String.Join(", ", updatePairs), rowid);
-            command.Parameters.AddRange(updatePrms);
+            List<SQLiteParameter> prmsList = new List<SQLiteParameter>();
+            List<string> updatePairs = new List<string>();
+            for (int i = 0; i < updatePrms.GetLength(0); i++)
+            {
+                prmsList.Add(new SQLiteParameter(String.Format("@{0}", updatePrms[i, 0]), updatePrms[i, 1]));
+                updatePairs.Add(String.Format("{0} = @{0} ", updatePrms[i, 0]));
+            }
+            command.CommandText = String.Format("update {0} set {1} WHERE rowid = {2};", tableName, String.Join(", ", updatePairs.ToArray()), rowid);
+            command.Parameters.AddRange(prmsList.ToArray());
             command.ExecuteNonQuery();
         }
         public void DeleteSQLiteRow(int rowid)
@@ -170,19 +177,19 @@ namespace VirtualJustInTimeDemoGrid
         public void LoadTestData()
         {
             string[] insertDataArray = new string[fields.Length];
-            int status = 0; int level = 0;
+            int status = 1; int level = 1;
             using (SQLiteTransaction transaction = command.Connection.BeginTransaction())
             {
                 command.Transaction = transaction;
-                for (int i = 0; i < 1000; i++)
+                for (int i = 1; i <= 1000; i++)
                 {
                     for (int j = 0; j < fields.Length; j++)
                         insertDataArray[j] = String.Format("{0}-{1}", fields[j], i);
-                    if (status == 5)  status = 0;
+                    if (status == 6)  status = 0;
                     insertDataArray[0] = String.Format("{0}-{1}", fields[0], status);
 
                     if (level == 10) level = 0;
-                    insertDataArray[3] = String.Format("{0}-{1}", fields[3], level);
+                    insertDataArray[1] = String.Format("{0}-{1}", fields[1], level);
 
                     InsertSQLiteRow(fields, insertDataArray);
                     status++;

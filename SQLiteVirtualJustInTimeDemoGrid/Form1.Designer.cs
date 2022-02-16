@@ -29,33 +29,28 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.panel1 = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsbCreate = new System.Windows.Forms.ToolStripButton();
+            this.tsbOpen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbAdd = new System.Windows.Forms.ToolStripButton();
             this.tsbDelete = new System.Windows.Forms.ToolStripButton();
             this.tsbUpdate = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsbOpen = new System.Windows.Forms.ToolStripButton();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.virtualJustInTimeDemoGrid1 = new VirtualJustInTimeDemoGrid.VirtualJustInTimeDemoGrid();
-            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.tBFld = new System.Windows.Forms.TextBox();
+            this.tBtestField = new System.Windows.Forms.TextBox();
+            this.cmBoxStatus = new System.Windows.Forms.ComboBox();
+            this.cmBoxLevel = new System.Windows.Forms.ComboBox();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(733, 28);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(290, 397);
-            this.panel1.TabIndex = 1;
             // 
             // statusStrip1
             // 
@@ -69,6 +64,12 @@
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(15, 20);
+            this.toolStripStatusLabel1.Text = "-";
+            // 
             // toolStrip1
             // 
             this.toolStrip1.GripMargin = new System.Windows.Forms.Padding(10, 5, 2, 5);
@@ -79,13 +80,10 @@
             this.toolStripSeparator1,
             this.tsbAdd,
             this.tsbDelete,
-            this.tsbUpdate,
-            this.toolStripComboBox1,
-            this.toolStripSeparator3,
-            this.toolStripComboBox2});
+            this.tsbUpdate});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1023, 28);
+            this.toolStrip1.Size = new System.Drawing.Size(1023, 27);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -95,9 +93,23 @@
             this.tsbCreate.Image = ((System.Drawing.Image)(resources.GetObject("tsbCreate.Image")));
             this.tsbCreate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbCreate.Name = "tsbCreate";
-            this.tsbCreate.Size = new System.Drawing.Size(56, 25);
+            this.tsbCreate.Size = new System.Drawing.Size(56, 24);
             this.tsbCreate.Text = "Create";
             this.tsbCreate.Click += new System.EventHandler(this.tsbCreate_Click);
+            // 
+            // tsbOpen
+            // 
+            this.tsbOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbOpen.Image = ((System.Drawing.Image)(resources.GetObject("tsbOpen.Image")));
+            this.tsbOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbOpen.Name = "tsbOpen";
+            this.tsbOpen.Size = new System.Drawing.Size(49, 24);
+            this.tsbOpen.Text = "Open";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
             // 
             // tsbAdd
             // 
@@ -105,7 +117,7 @@
             this.tsbAdd.Image = ((System.Drawing.Image)(resources.GetObject("tsbAdd.Image")));
             this.tsbAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbAdd.Name = "tsbAdd";
-            this.tsbAdd.Size = new System.Drawing.Size(41, 25);
+            this.tsbAdd.Size = new System.Drawing.Size(41, 24);
             this.tsbAdd.Text = "Add";
             // 
             // tsbDelete
@@ -114,8 +126,9 @@
             this.tsbDelete.Image = ((System.Drawing.Image)(resources.GetObject("tsbDelete.Image")));
             this.tsbDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDelete.Name = "tsbDelete";
-            this.tsbDelete.Size = new System.Drawing.Size(57, 25);
+            this.tsbDelete.Size = new System.Drawing.Size(57, 24);
             this.tsbDelete.Text = "Delete";
+            this.tsbDelete.Click += new System.EventHandler(this.tsbDelete_Click);
             // 
             // tsbUpdate
             // 
@@ -123,37 +136,27 @@
             this.tsbUpdate.Image = ((System.Drawing.Image)(resources.GetObject("tsbUpdate.Image")));
             this.tsbUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbUpdate.Name = "tsbUpdate";
-            this.tsbUpdate.Size = new System.Drawing.Size(62, 25);
+            this.tsbUpdate.Size = new System.Drawing.Size(62, 24);
             this.tsbUpdate.Text = "Update";
+            this.tsbUpdate.Click += new System.EventHandler(this.tsbUpdate_Click);
             // 
-            // toolStripSeparator1
+            // splitContainer1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 28);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 27);
+            this.splitContainer1.Name = "splitContainer1";
             // 
-            // tsbOpen
+            // splitContainer1.Panel1
             // 
-            this.tsbOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.tsbOpen.Image = ((System.Drawing.Image)(resources.GetObject("tsbOpen.Image")));
-            this.tsbOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsbOpen.Name = "tsbOpen";
-            this.tsbOpen.Size = new System.Drawing.Size(49, 25);
-            this.tsbOpen.Text = "Open";
+            this.splitContainer1.Panel1.Controls.Add(this.virtualJustInTimeDemoGrid1);
             // 
-            // toolStripStatusLabel1
+            // splitContainer1.Panel2
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(151, 20);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.virtualJustInTimeDemoGrid1);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 28);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1023, 397);
-            this.panel2.TabIndex = 4;
+            this.splitContainer1.Panel2.Controls.Add(this.tBFld);
+            this.splitContainer1.Panel2.Controls.Add(this.tBtestField);
+            this.splitContainer1.Size = new System.Drawing.Size(1023, 398);
+            this.splitContainer1.SplitterDistance = 785;
+            this.splitContainer1.TabIndex = 4;
             // 
             // virtualJustInTimeDemoGrid1
             // 
@@ -161,34 +164,53 @@
             this.virtualJustInTimeDemoGrid1.Location = new System.Drawing.Point(0, 0);
             this.virtualJustInTimeDemoGrid1.MemCache = null;
             this.virtualJustInTimeDemoGrid1.Name = "virtualJustInTimeDemoGrid1";
-            this.virtualJustInTimeDemoGrid1.Size = new System.Drawing.Size(1023, 397);
+            this.virtualJustInTimeDemoGrid1.Size = new System.Drawing.Size(785, 398);
             this.virtualJustInTimeDemoGrid1.TabIndex = 0;
+            this.virtualJustInTimeDemoGrid1.CurrentChanged += new System.EventHandler(this.virtualJustInTimeDemoGrid1_CurrentChanged);
             // 
-            // toolStripComboBox1
+            // tBFld
             // 
-            this.toolStripComboBox1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripComboBox1.Name = "toolStripComboBox1";
-            this.toolStripComboBox1.Size = new System.Drawing.Size(121, 28);
+            this.tBFld.Location = new System.Drawing.Point(12, 72);
+            this.tBFld.Name = "tBFld";
+            this.tBFld.ReadOnly = true;
+            this.tBFld.Size = new System.Drawing.Size(210, 22);
+            this.tBFld.TabIndex = 1;
             // 
-            // toolStripComboBox2
+            // tBtestField
             // 
-            this.toolStripComboBox2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripComboBox2.Name = "toolStripComboBox2";
-            this.toolStripComboBox2.Size = new System.Drawing.Size(121, 28);
+            this.tBtestField.Location = new System.Drawing.Point(12, 28);
+            this.tBtestField.Name = "tBtestField";
+            this.tBtestField.Size = new System.Drawing.Size(210, 22);
+            this.tBtestField.TabIndex = 0;
             // 
-            // toolStripSeparator3
+            // cmBoxStatus
             // 
-            this.toolStripSeparator3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 28);
+            this.cmBoxStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmBoxStatus.FormattingEnabled = true;
+            this.cmBoxStatus.Location = new System.Drawing.Point(895, 1);
+            this.cmBoxStatus.Name = "cmBoxStatus";
+            this.cmBoxStatus.Size = new System.Drawing.Size(121, 24);
+            this.cmBoxStatus.TabIndex = 5;
+            this.cmBoxStatus.SelectionChangeCommitted += new System.EventHandler(this.cmBox_TextChanged);
+            // 
+            // cmBoxLevel
+            // 
+            this.cmBoxLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmBoxLevel.FormattingEnabled = true;
+            this.cmBoxLevel.Location = new System.Drawing.Point(756, 1);
+            this.cmBoxLevel.Name = "cmBoxLevel";
+            this.cmBoxLevel.Size = new System.Drawing.Size(121, 24);
+            this.cmBoxLevel.TabIndex = 6;
+            this.cmBoxLevel.SelectionChangeCommitted += new System.EventHandler(this.cmBox_TextChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 450);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.cmBoxLevel);
+            this.Controls.Add(this.cmBoxStatus);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
             this.Name = "Form1";
@@ -198,15 +220,17 @@
             this.statusStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.panel2.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStrip toolStrip1;
@@ -216,11 +240,12 @@
         private System.Windows.Forms.ToolStripButton tsbAdd;
         private System.Windows.Forms.ToolStripButton tsbDelete;
         private System.Windows.Forms.ToolStripButton tsbUpdate;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.SplitContainer splitContainer1;
         private VirtualJustInTimeDemoGrid.VirtualJustInTimeDemoGrid virtualJustInTimeDemoGrid1;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox2;
+        private System.Windows.Forms.TextBox tBFld;
+        private System.Windows.Forms.TextBox tBtestField;
+        private System.Windows.Forms.ComboBox cmBoxStatus;
+        private System.Windows.Forms.ComboBox cmBoxLevel;
     }
 }
 

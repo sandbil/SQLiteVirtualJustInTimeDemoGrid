@@ -39,32 +39,15 @@ namespace VirtualJustInTimeDemoGrid
 
         public int RowCount
         {
-            get
-            {
-                return dataGridView1.RowCount;
-            }
-            set
-            {
-                dataGridView1.RowCount = value;
-            }
+            get => dataGridView1.RowCount;
+            set => dataGridView1.RowCount = value;
         }
 
-        public string[] Columns
+        public void AddColumns(string[] fields)
         {
-            get
-            {
-                string[] res = new string[dataGridView1.ColumnCount];
-                for (int i = 0; i < dataGridView1.ColumnCount; i++)
-                    res[i] = dataGridView1.Columns[i].Name;
-                return res;
-            }
-            set
-            {
-                dataGridView1.Columns.Add("rowid", "rowid");
-                dataGridView1.Columns[0].Visible = false;
-                foreach (string fl in value)
-                    dataGridView1.Columns.Add(fl,fl);
-            }
+            dataGridView1.Columns.Add("rowid", "rowid");
+            foreach (string fl in fields)
+                dataGridView1.Columns.Add(fl, fl);
         }
 
         public DataGridViewRowCollection Rows
@@ -83,14 +66,8 @@ namespace VirtualJustInTimeDemoGrid
         }
         public Cache MemCache
         {
-            get
-            {
-                return memoryCache;
-            }
-            set
-            {
-                memoryCache = value;
-            }
+            get => memoryCache;
+            set => memoryCache = value;
         }
 
         public void Open(string connectionStr, string openTable, string[] fields, string filterStr = null)
@@ -147,6 +124,27 @@ namespace VirtualJustInTimeDemoGrid
             }
             
         }
+        public void UpdateCurRow(string[,] updatePrms)
+        {
+            try
+            {
+                int rowid = Convert.ToInt32(dataGridView1.CurrentRow.Cells["rowid"].Value);
+                int curInd = dataGridView1.CurrentRow.Index;
+                Debug.WriteLine("(before update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
+                retriever.UpdateSQLiteRow(updatePrms, rowid);
+                memoryCache.RefreshPage(curInd);
+                dataGridView1.RowCount = memoryCache.AllRowCount;
+                dataGridView1.Refresh();
+                Debug.WriteLine("(after update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
+
+            }
+            catch (Exception ex)
+            {
+                // Debug.Assert(false, ex.Message);
+                MessageBox.Show(ex.Message);
+            }
+
+        }
         private void dataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             if (e.RowIndex < 0 || e.RowIndex >= dataGridView1.RowCount) return;
@@ -185,24 +183,15 @@ namespace VirtualJustInTimeDemoGrid
         {
             try
             {
-                if (MessageBox.Show("Вы действительно хотите удалить эту строку?", "Внимание", MessageBoxButtons.YesNo) == DialogResult.No)
+                if (false)//(MessageBox.Show("Вы действительно хотите удалить эту строку?", "Внимание", MessageBoxButtons.YesNo) == DialogResult.No)
                 {
                     e.Cancel = true;
                 }
                 else
                 {
                     int rowid = Convert.ToInt32(e.Row.Cells["rowid"].Value);
-                    using (SQLiteConnection dbConnection = new SQLiteConnection(connectionString))
-                    {
-                        dbConnection.Open();
-                        using (SQLiteCommand cmd = dbConnection.CreateCommand())
-                        {
-                            cmd.CommandText = String.Format("DELETE FROM {0} WHERE rowid = {1};", table, rowid);
-                            cmd.ExecuteNonQuery();
-                        }
-                    };
+                    retriever.DeleteSQLiteRow(rowid);
                     memoryCache.RefreshPage(e.Row.Index);
-                    Debug.Assert(memoryCache.AllRowCount != RowCount, "UserDeletingRow - rowcount is equal");
                     Debug.WriteLine("(UserDeletingRow) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.Row.Index);
                 }
             }
