@@ -30,7 +30,7 @@ namespace VirtualJustInTimeDemoGrid
         private DataRetriever retriever;
         private string connectionString;
         private string table;
-        private string fields;
+        private string[] _fields;
         public string filter;
 
         public event EventHandler CurrentChanged;
@@ -46,6 +46,24 @@ namespace VirtualJustInTimeDemoGrid
             set
             {
                 dataGridView1.RowCount = value;
+            }
+        }
+
+        public string[] Columns
+        {
+            get
+            {
+                string[] res = new string[dataGridView1.ColumnCount];
+                for (int i = 0; i < dataGridView1.ColumnCount; i++)
+                    res[i] = dataGridView1.Columns[i].Name;
+                return res;
+            }
+            set
+            {
+                dataGridView1.Columns.Add("rowid", "rowid");
+                dataGridView1.Columns[0].Visible = false;
+                foreach (string fl in value)
+                    dataGridView1.Columns.Add(fl,fl);
             }
         }
 
@@ -75,11 +93,11 @@ namespace VirtualJustInTimeDemoGrid
             }
         }
 
-        public void Open(string connectionStr, string openTable, string fieldsStr = "*", string filterStr = null)
+        public void Open(string connectionStr, string openTable, string[] fields, string filterStr = null)
         {
             Debug.WriteLine("(Open before) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
-            connectionString = connectionStr; table = openTable; fields = fieldsStr; filter = filterStr;
-            retriever = new DataRetriever(connectionString, table, String.Join(", ", fields), filter);
+            connectionString = connectionStr; table = openTable; _fields = fields; filter = filterStr;
+            retriever = new DataRetriever(connectionString, table, _fields, filter);
             memoryCache = new Cache(retriever, rowPerPage);
             MemCache = memoryCache;
             //dataGridView1.RowCount = 0;
@@ -135,27 +153,7 @@ namespace VirtualJustInTimeDemoGrid
             if (memoryCache?.AllRowCount == 0 || dataGridView1.RowCount != memoryCache?.AllRowCount)
                 return;
 
-            switch (dataGridView1.Columns[e.ColumnIndex].Name)
-            {
-                case "rowid":
-                    e.Value = memoryCache.RetrieveElement(e.RowIndex, "rowid");
-                    break;
-                case "ColumnStatus":
-                    e.Value = memoryCache.RetrieveElement(e.RowIndex, "status");
-                    break;
-                case "ColumnText":
-                    e.Value = memoryCache.RetrieveElement(e.RowIndex, "txtAdr");
-                    break;
-                case "ColumnResult":
-                    e.Value = memoryCache.RetrieveElement(e.RowIndex, "realObj");
-                    break;
-                case "ColumnLevel":
-                    e.Value = memoryCache.RetrieveElement(e.RowIndex, "level");
-                    break;
-                case "ColumnTime":
-                    e.Value = memoryCache.RetrieveElement(e.RowIndex, "timeNer");
-                    break;
-            }
+            e.Value = memoryCache.RetrieveElement(e.RowIndex, e.ColumnIndex);
         }
 
         private bool IsCellValid(int columnIndex, int rowIndex)
@@ -171,10 +169,10 @@ namespace VirtualJustInTimeDemoGrid
             if (!IsCellValid(e.ColumnIndex, e.RowIndex)) return;
 
             var r = dataGridView1.Rows[e.RowIndex];
-            string status = r.Cells["ColumnStatus"].Value.ToString();
-            r.Cells[e.ColumnIndex].Style.BackColor = status == "Error" ? Color.LightPink :
-                status == "Warning" ? Color.Yellow :
-                status == "Undefined" ? Color.LightGray : Color.White;
+            string status = r.Cells["status"].Value.ToString();
+            r.Cells[e.ColumnIndex].Style.BackColor = status == "status-3" ? Color.LightPink :
+                status == "status-2" ? Color.Yellow :
+                status == "status-0" ? Color.LightGray : Color.White;
         }
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)

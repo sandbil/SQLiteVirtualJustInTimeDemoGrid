@@ -22,17 +22,19 @@ namespace VirtualJustInTimeDemoGrid
     public class DataRetriever : IDataPageRetriever
     {
         private string tableName;
+        private string[] fields;
         private string fieldList;
         private string filterStr;
-        private SQLiteCommand command;
+        public SQLiteCommand command;
 
-        public DataRetriever(string connectionString, string tableName, string fieldList = "*", string filter = null)
+        public DataRetriever(string connectionString, string tableName, string[] fields, string filter = null)
         {
             SQLiteConnection connection = new SQLiteConnection(connectionString);
             connection.Open();
             command = connection.CreateCommand();
             this.tableName = tableName;
-            this.fieldList = fieldList;
+            this.fields = fields;
+            this.fieldList = String.Join(",", fields);
             this.filterStr = filter ?? "";
         }
 
@@ -138,13 +140,19 @@ namespace VirtualJustInTimeDemoGrid
 
         public void CreateTable()
         {
-            command.CommandText = @"CREATE TABLE IF NOT EXISTS " + tableName +
-                              "( " + String.Join(" text, ", fieldList) + " text);";
+            command.CommandText = String.Format("CREATE TABLE IF NOT EXISTS {0} ({1});", tableName, String.Join(" text, ", fields) + " text");
+            command.ExecuteNonQuery();
+        }
+
+        public void DropTable()
+        {
+            command.CommandText = String.Format("DROP TABLE IF EXISTS {0};", tableName) ;
             command.ExecuteNonQuery();
         }
         public void InsertSQLiteRow(string[] insertFields, string[] insertData)
         {
-            command.CommandText = String.Format("insert into {0} ({1}) values ({2});", tableName, String.Join(", ", insertFields), String.Join(", ", insertData));
+
+            command.CommandText = String.Format("insert into {0} ({1}) values ({2});", tableName, String.Join(", ", insertFields), "'" + String.Join("', '", insertData) + "'");
             command.ExecuteNonQuery();
         }
         public void UpdateSQLiteRow(SQLiteParameter[] updatePrms, string[] updatePairs, int rowid)
@@ -157,6 +165,32 @@ namespace VirtualJustInTimeDemoGrid
         {
             command.CommandText = String.Format("DELETE FROM {0} WHERE rowid = {1};", tableName, rowid);
             command.ExecuteNonQuery();
+        }
+
+        public void LoadTestData()
+        {
+            string[] insertDataArray = new string[fields.Length];
+            int status = 0; int level = 0;
+            using (SQLiteTransaction transaction = command.Connection.BeginTransaction())
+            {
+                command.Transaction = transaction;
+                for (int i = 0; i < 1000; i++)
+                {
+                    for (int j = 0; j < fields.Length; j++)
+                        insertDataArray[j] = String.Format("{0}-{1}", fields[j], i);
+                    if (status == 5)  status = 0;
+                    insertDataArray[0] = String.Format("{0}-{1}", fields[0], status);
+
+                    if (level == 10) level = 0;
+                    insertDataArray[3] = String.Format("{0}-{1}", fields[3], level);
+
+                    InsertSQLiteRow(fields, insertDataArray);
+                    status++;
+                    level++;
+
+                }
+                transaction.Commit();
+            }
         }
     }
     public class Cache

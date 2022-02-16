@@ -30,12 +30,6 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.rowid = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnText = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnResult = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColumnTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,13 +40,6 @@
             this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.rowid,
-            this.ColumnStatus,
-            this.ColumnText,
-            this.ColumnResult,
-            this.ColumnLevel,
-            this.ColumnTime});
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -77,51 +64,6 @@
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             this.dataGridView1.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dataGridView1_UserDeletingRow);
             // 
-            // rowid
-            // 
-            this.rowid.HeaderText = "rowid";
-            this.rowid.Name = "rowid";
-            this.rowid.ReadOnly = true;
-            this.rowid.Visible = false;
-            // 
-            // ColumnStatus
-            // 
-            this.ColumnStatus.FillWeight = 12F;
-            this.ColumnStatus.HeaderText = "Статус";
-            this.ColumnStatus.Name = "ColumnStatus";
-            this.ColumnStatus.ReadOnly = true;
-            this.ColumnStatus.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            // 
-            // ColumnText
-            // 
-            this.ColumnText.HeaderText = "Текст";
-            this.ColumnText.Name = "ColumnText";
-            this.ColumnText.ReadOnly = true;
-            this.ColumnText.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            // 
-            // ColumnResult
-            // 
-            this.ColumnResult.HeaderText = "Результат";
-            this.ColumnResult.Name = "ColumnResult";
-            this.ColumnResult.ReadOnly = true;
-            this.ColumnResult.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            // 
-            // ColumnLevel
-            // 
-            this.ColumnLevel.FillWeight = 12F;
-            this.ColumnLevel.HeaderText = "Уровень";
-            this.ColumnLevel.Name = "ColumnLevel";
-            this.ColumnLevel.ReadOnly = true;
-            this.ColumnLevel.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            // 
-            // ColumnTime
-            // 
-            this.ColumnTime.FillWeight = 12F;
-            this.ColumnTime.HeaderText = "Время, мс";
-            this.ColumnTime.Name = "ColumnTime";
-            this.ColumnTime.ReadOnly = true;
-            this.ColumnTime.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            // 
             // VirtualJustInTimeDemoGrid
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -137,11 +79,5 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn rowid;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnStatus;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnText;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnResult;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLevel;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTime;
     }
 }
