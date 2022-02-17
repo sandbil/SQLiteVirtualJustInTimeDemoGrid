@@ -33,6 +33,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             sqliteDS.LoadTestData();
             virtualJustInTimeDemoGrid1.AddColumns(fields);
             virtualJustInTimeDemoGrid1.Open(connectionString, table, fields, filterStr);
+            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
 
             cmBoxLevel.Items.Add("All levels");
             for (int i = 0; i <= 9; i++)
@@ -67,10 +68,10 @@ namespace SQLiteVirtualJustInTimeDemoGrid
         {
             virtualJustInTimeDemoGrid1.Focus();
             SendKeys.Send("{DEL}");
-
+            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
         }
 
-        private void cmBox_TextChanged(object sender, EventArgs e)
+        private void cmBox_SelectionChangeCommited(object sender, EventArgs e)
         {
             if (cmBoxStatus.SelectedIndex != 0)
                 filterStr = String.Format(" where status = '{0}'", cmBoxStatus.SelectedItem.ToString());
@@ -87,7 +88,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
 
             virtualJustInTimeDemoGrid1.Open(connectionString, table, fields, filterStr);
             virtualJustInTimeDemoGrid1.Focus();
-            toolStripStatusLabel1.Text = String.Format("loaded {0} rec", virtualJustInTimeDemoGrid1.RowCount);
+            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
 
         }
 
@@ -97,6 +98,14 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             string[,] updateData = new string[3, 2] {  { "status", "status-0" }, { "level", "" }, { "fld", "" } };
 
             virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);
+            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
+        }
+
+        private void tBtestField_TextChanged(object sender, EventArgs e)
+        {
+            string[,] updateData = new string[1, 2] { { "testField", tBtestField.Text} };
+            virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);
+            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
         }
     }
 }

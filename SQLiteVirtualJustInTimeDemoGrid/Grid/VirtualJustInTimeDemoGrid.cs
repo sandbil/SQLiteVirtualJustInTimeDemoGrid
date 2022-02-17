@@ -76,7 +76,6 @@ namespace VirtualJustInTimeDemoGrid
             sqliteDS = new SQLiteDataStore(connectionString, table, _fields, filter);
             memoryCache = new Cache(sqliteDS, rowPerPage);
             MemCache = memoryCache;
-            //dataGridView1.RowCount = 0;
             dataGridView1.Rows.Clear();
             dataGridView1.RowCount = sqliteDS.RowCount;
             dataGridView1.Refresh();
@@ -84,45 +83,6 @@ namespace VirtualJustInTimeDemoGrid
 
         }
 
-        public void UpdateOneRow(SQLiteParameter[] updatePrms, string[] updatePairs)
-        {
-            try
-            {
-                int rowid = Convert.ToInt32(dataGridView1.CurrentRow.Cells["rowid"].Value);
-                int curInd = dataGridView1.CurrentRow.Index;
-                Debug.WriteLine("(before update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
-                using (SQLiteConnection dbConnection = new SQLiteConnection(connectionString))
-                {
-                    dbConnection.Open();
-                    using (SQLiteCommand cmd = dbConnection.CreateCommand())
-                    {
-                        cmd.CommandText = String.Format("update {0} set {1} WHERE rowid = {2};", table, String.Join(", ", updatePairs), rowid);
-                        cmd.Parameters.AddRange(updatePrms);
-                        cmd.ExecuteNonQuery();
-                    }
-                };
-                
-                memoryCache.RefreshPage(curInd);
-                //dataGridView1.Rows.Clear();
-                dataGridView1.RowCount = memoryCache.AllRowCount;
-                //dataGridView1.ClearSelection();
-                /*if (curInd <= memoryCache.AllRowCount-1)
-                {
-                    dataGridView1.CurrentCell = dataGridView1.Rows[curInd].Cells[1];
-                    dataGridView1.Rows[curInd].Selected = true;
-                }*/
-                    
-                dataGridView1.Refresh();
-                Debug.WriteLine("(after update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
-
-            }
-            catch (Exception ex)
-            {
-               // Debug.Assert(false, ex.Message);
-                MessageBox.Show(ex.Message);
-            }
-            
-        }
         public void UpdateCurRow(string[,] updatePrms)
         {
             try
@@ -140,7 +100,7 @@ namespace VirtualJustInTimeDemoGrid
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.Message);
-                Debug.WriteLine(ex.Message);
+                Debug.WriteLine("(UpdateCurRow) " + ex.Message);
             }
 
         }

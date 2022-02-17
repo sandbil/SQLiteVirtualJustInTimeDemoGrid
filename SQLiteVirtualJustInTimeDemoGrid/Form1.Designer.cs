@@ -182,6 +182,7 @@
             this.tBtestField.Name = "tBtestField";
             this.tBtestField.Size = new System.Drawing.Size(210, 22);
             this.tBtestField.TabIndex = 0;
+            this.tBtestField.TextChanged += new System.EventHandler(this.tBtestField_TextChanged);
             // 
             // cmBoxStatus
             // 
@@ -191,7 +192,7 @@
             this.cmBoxStatus.Name = "cmBoxStatus";
             this.cmBoxStatus.Size = new System.Drawing.Size(121, 24);
             this.cmBoxStatus.TabIndex = 5;
-            this.cmBoxStatus.SelectionChangeCommitted += new System.EventHandler(this.cmBox_TextChanged);
+            this.cmBoxStatus.SelectionChangeCommitted += new System.EventHandler(this.cmBox_SelectionChangeCommited);
             // 
             // cmBoxLevel
             // 
@@ -201,7 +202,7 @@
             this.cmBoxLevel.Name = "cmBoxLevel";
             this.cmBoxLevel.Size = new System.Drawing.Size(121, 24);
             this.cmBoxLevel.TabIndex = 6;
-            this.cmBoxLevel.SelectionChangeCommitted += new System.EventHandler(this.cmBox_TextChanged);
+            this.cmBoxLevel.SelectionChangeCommitted += new System.EventHandler(this.cmBox_SelectionChangeCommited);
             // 
             // Form1
             // 
