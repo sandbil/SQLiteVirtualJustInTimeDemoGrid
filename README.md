@@ -22,5 +22,6 @@ immediate update if row is deleted or inserted.
 
 It's tested with VS 2017   
 
-## Usage
+## Links
+https://docs.microsoft.com/ru-ru/dotnet/desktop/winforms/controls/implementing-virtual-mode-jit-data-loading-in-the-datagrid?view=netframeworkdesktop-4.8
 

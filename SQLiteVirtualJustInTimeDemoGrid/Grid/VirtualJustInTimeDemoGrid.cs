@@ -41,34 +41,19 @@ namespace VirtualJustInTimeDemoGrid
             get => dataGridView1.RowCount;
             set => dataGridView1.RowCount = value;
         }
-
+        public DataGridViewRowCollection Rows => dataGridView1.Rows;
+        public int? CurrentRowIndex => dataGridView1.CurrentRow?.Index;
+        public Cache MemCache
+        {
+            get => memoryCache;
+            set => memoryCache = value;
+        }
         public void AddColumns(string[] fields)
         {
             dataGridView1.Columns.Add("rowid", "rowid");
             foreach (string fl in fields)
                 dataGridView1.Columns.Add(fl, fl);
         }
-
-        public DataGridViewRowCollection Rows
-        {
-            get
-            {
-                return dataGridView1.Rows;
-            }
-        }
-        public int? CurrentRowIndex
-        {
-            get
-            {
-                return dataGridView1.CurrentRow?.Index;
-            }
-        }
-        public Cache MemCache
-        {
-            get => memoryCache;
-            set => memoryCache = value;
-        }
-
         public void Open(string connectionStr, string openTable, string[] fields, string filterStr = null)
         {
             Debug.WriteLine("(Open before) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
@@ -95,11 +80,10 @@ namespace VirtualJustInTimeDemoGrid
                 dataGridView1.RowCount = memoryCache.AllRowCount;
                 dataGridView1.Refresh();
                 Debug.WriteLine("(after update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
-
+                CurrentChanged(dataGridView1, EventArgs.Empty); //! Force emit  current row event
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message);
                 Debug.WriteLine("(UpdateCurRow) " + ex.Message);
             }
 
@@ -157,7 +141,7 @@ namespace VirtualJustInTimeDemoGrid
             }
             catch (Exception ex)
             {
-                Debug.Assert(false, ex.Message);
+                Debug.WriteLine( ex.Message);
                 e.Cancel = true;
             }
         }

@@ -104,7 +104,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
         private void tBtestField_TextChanged(object sender, EventArgs e)
         {
             string[,] updateData = new string[1, 2] { { "testField", tBtestField.Text} };
-            virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);
+            //virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);
             toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
         }
     }
