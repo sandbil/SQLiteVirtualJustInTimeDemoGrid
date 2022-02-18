@@ -162,7 +162,6 @@
             // 
             this.virtualJustInTimeDemoGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.virtualJustInTimeDemoGrid1.Location = new System.Drawing.Point(0, 0);
-            this.virtualJustInTimeDemoGrid1.MemCache = null;
             this.virtualJustInTimeDemoGrid1.Name = "virtualJustInTimeDemoGrid1";
             this.virtualJustInTimeDemoGrid1.Size = new System.Drawing.Size(785, 398);
             this.virtualJustInTimeDemoGrid1.TabIndex = 0;

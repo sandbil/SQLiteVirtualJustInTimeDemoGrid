@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -41,7 +42,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             cmBoxLevel.SelectedIndex = 0;
 
             cmBoxStatus.Items.Add("All statuses");
-            for (int i = 0; i <= 4; i++)
+            for (int i = 0; i <= 8; i++)
                 cmBoxStatus.Items.Add(String.Format("status-{0}", i));
             cmBoxStatus.SelectedIndex = 0;
 
@@ -62,6 +63,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             int rowIndex = (int)virtualJustInTimeDemoGrid1.CurrentRowIndex;
             tBtestField.Text = virtualJustInTimeDemoGrid1.Rows[rowIndex].Cells[3].Value?.ToString();
             tBFld.Text = virtualJustInTimeDemoGrid1.Rows[rowIndex].Cells[4].Value?.ToString();
+            Debug.WriteLine("(Form1 CurrentChanged) RowCount: " + virtualJustInTimeDemoGrid1.RowCount +  ", RowIndex: " + rowIndex);
         }
 
         private void tsbDelete_Click(object sender, EventArgs e)
@@ -94,7 +96,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
 
         private void tsbUpdate_Click(object sender, EventArgs e)
         {
-            int rowIndex = (int)virtualJustInTimeDemoGrid1.CurrentRowIndex;
+            //int rowIndex = (int)virtualJustInTimeDemoGrid1?.CurrentRowIndex;
             string[,] updateData = new string[3, 2] {  { "status", "status-0" }, { "level", "" }, { "fld", "" } };
 
             virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);

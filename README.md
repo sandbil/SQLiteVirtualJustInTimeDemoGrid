@@ -1,13 +1,12 @@
 ---
 title: DataGridView VirtualMode
 description: simple example DataGridView in VirtualMode with SQLite.  
-author: sandbil
 tags: C# DataGridView VirtualMode Just-In-Time Data Loading
 
 ---
 DataGridView VirtualMode example with some of diagnostic capability
 =========
-This example shows how to work with DGV in virtual mode. 
+This simple example shows DGV in virtual mode. 
 Just-In-Time Data Loading is implemented. SQLite is used as a data store.
 Some diagnostic messages will be printed to the output console VS:
  The RowCount of the DataGridView
@@ -24,4 +23,5 @@ It's tested with VS 2017
 
 ## Links
 https://docs.microsoft.com/ru-ru/dotnet/desktop/winforms/controls/implementing-virtual-mode-jit-data-loading-in-the-datagrid?view=netframeworkdesktop-4.8
+https://stackoverflow.com/questions/60658921/how-to-keep-virtualmode-datagridview-from-calling-cellvalueneeded-while-updating/62241176#62241176
 

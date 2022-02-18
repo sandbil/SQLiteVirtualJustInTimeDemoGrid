@@ -19,8 +19,8 @@ namespace VirtualJustInTimeDemoGrid
         {
             InitializeComponent();
             if (DesignMode) return;
+            // to avoid errors specified row index is out of range.
             dataGridView1.Rows.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(this.DataGridViewRowCollection1_CollectionChanged);
-
         }
 
         public int rowPerPage = 15;
@@ -36,18 +36,9 @@ namespace VirtualJustInTimeDemoGrid
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 
-        public int RowCount
-        {
-            get => dataGridView1.RowCount;
-            set => dataGridView1.RowCount = value;
-        }
+        public int RowCount => dataGridView1.RowCount;
         public DataGridViewRowCollection Rows => dataGridView1.Rows;
         public int? CurrentRowIndex => dataGridView1.CurrentRow?.Index;
-        public Cache MemCache
-        {
-            get => memoryCache;
-            set => memoryCache = value;
-        }
         public void AddColumns(string[] fields)
         {
             dataGridView1.Columns.Add("rowid", "rowid");
@@ -56,15 +47,20 @@ namespace VirtualJustInTimeDemoGrid
         }
         public void Open(string connectionStr, string openTable, string[] fields, string filterStr = null)
         {
-            Debug.WriteLine("(Open before) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
-            connectionString = connectionStr; table = openTable; _fields = fields; filter = filterStr;
-            sqliteDS = new SQLiteDataStore(connectionString, table, _fields, filter);
-            memoryCache = new Cache(sqliteDS, rowPerPage);
-            MemCache = memoryCache;
-            dataGridView1.Rows.Clear();
-            dataGridView1.RowCount = sqliteDS.RowCount;
-            dataGridView1.Refresh();
-            Debug.WriteLine("(Open after) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
+            try
+            {
+                connectionString = connectionStr; table = openTable; _fields = fields; filter = filterStr;
+                sqliteDS = new SQLiteDataStore(connectionString, table, _fields, filter);
+                memoryCache = new Cache(sqliteDS, rowPerPage);
+                dataGridView1.Rows.Clear();
+                dataGridView1.RowCount = sqliteDS.RowCount;
+                dataGridView1.Refresh();
+                Debug.WriteLine("(Open after) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error (Open) " + ex.Message);
+            }
 
         }
 
@@ -72,28 +68,29 @@ namespace VirtualJustInTimeDemoGrid
         {
             try
             {
+                if (CurrentRowIndex == null) return;
+                
                 int rowid = Convert.ToInt32(dataGridView1.CurrentRow.Cells["rowid"].Value);
-                int curInd = dataGridView1.CurrentRow.Index;
+                int curInd = (int) CurrentRowIndex;
                 sqliteDS.UpdateSQLiteRow(updatePrms, rowid);
                 memoryCache.RefreshPage(curInd);
-                Debug.WriteLine("(before update RowCount) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
+                Debug.WriteLine("(before update RowCount) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + curInd);
                 dataGridView1.RowCount = memoryCache.AllRowCount;
                 dataGridView1.Refresh();
-                Debug.WriteLine("(after update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + curInd);
-                CurrentChanged(dataGridView1, EventArgs.Empty); //! Force emit  current row event
+                Debug.WriteLine("(after update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + curInd);
+                if (CurrentRowIndex != null)
+                    CurrentChanged(dataGridView1, EventArgs.Empty); //! Force emit a CurrentChanged event
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("(UpdateCurRow) " + ex.Message);
+                Debug.WriteLine("Error (UpdateCurRow) " + ex.Message);
             }
 
         }
         private void dataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
-            if (e.RowIndex < 0 || e.RowIndex >= dataGridView1.RowCount) return;
-            if (memoryCache?.AllRowCount == 0 || dataGridView1.RowCount != memoryCache?.AllRowCount)
-                return;
-
+            if (!IsCellValid(e.ColumnIndex, e.RowIndex) || memoryCache?.AllRowCount == 0) return;
+            //Debug.WriteLine("(before CellValueNeeded) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + e.RowIndex);
             e.Value = memoryCache.RetrieveElement(e.RowIndex, e.ColumnIndex);
         }
 
@@ -118,7 +115,7 @@ namespace VirtualJustInTimeDemoGrid
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            Debug.WriteLine("(SelectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
+            Debug.WriteLine("(SelectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
             if (CurrentRowIndex != null)
                 CurrentChanged(sender, e);
         }
@@ -146,14 +143,18 @@ namespace VirtualJustInTimeDemoGrid
             }
         }
 
+        // for diagnostic purposes and 
+        // to avoid errors specified row index is out of range.
+
         private void DataGridViewRowCollection1_CollectionChanged(Object sender, CollectionChangeEventArgs e)
         {
-            Debug.WriteLine("(CollectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.Element);
+            Debug.WriteLine("(CollectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + e.Element);
         }
 
+        // for diagnostic purpose only
         private void dataGridView1_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
         {
-            Debug.WriteLine("(RowsRemoved) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.RowIndex);
+            Debug.WriteLine("(RowsRemoved) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + e.RowIndex);
         }
     }
 }
