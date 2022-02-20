@@ -29,8 +29,9 @@ namespace VirtualJustInTimeDemoGrid
         private SQLiteDataStore sqliteDS;
         private string connectionString;
         private string table;
-        private string[] _fields;
         public string filter;
+
+        private Boolean ignore = false;
 
         public event EventHandler CurrentChanged;
 
@@ -49,16 +50,19 @@ namespace VirtualJustInTimeDemoGrid
         {
             try
             {
-                connectionString = connectionStr; table = openTable; _fields = fields; filter = filterStr;
-                sqliteDS = new SQLiteDataStore(connectionString, table, _fields, filter);
+                ignore = true;
+                connectionString = connectionStr; table = openTable;  filter = filterStr;
+                sqliteDS = new SQLiteDataStore(connectionString, table, fields, filter);
                 memoryCache = new Cache(sqliteDS, rowPerPage);
                 dataGridView1.Rows.Clear();
                 dataGridView1.RowCount = sqliteDS.RowCount;
                 dataGridView1.Refresh();
+                ignore = false;
                 Debug.WriteLine("(Open after) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
             }
             catch (Exception ex)
             {
+                ignore = false;
                 Debug.WriteLine("Error (Open) " + ex.Message);
             }
 
@@ -68,7 +72,7 @@ namespace VirtualJustInTimeDemoGrid
         {
             try
             {
-                if (CurrentRowIndex == null) return;
+                if (CurrentRowIndex == null || ignore) return;
                 
                 int rowid = Convert.ToInt32(dataGridView1.CurrentRow.Cells["rowid"].Value);
                 int curInd = (int) CurrentRowIndex;
@@ -124,6 +128,8 @@ namespace VirtualJustInTimeDemoGrid
         {
             try
             {
+                if (CurrentRowIndex == null || ignore) return;
+
                 if (false)//(MessageBox.Show("Вы действительно хотите удалить эту строку?", "Внимание", MessageBoxButtons.YesNo) == DialogResult.No)
                 {
                     e.Cancel = true;
