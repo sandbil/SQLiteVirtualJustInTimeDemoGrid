@@ -99,7 +99,12 @@ namespace SQLiteVirtualJustInTimeDemoGrid
 
         private void tsbUpdate_Click(object sender, EventArgs e)
         {
-            string[,] updateData = new string[3, 2] {  { "status", "status-0" }, { "level", "" }, { "fld", "" } };
+            List<KeyValuePair<string, object>> updateData = new List<KeyValuePair<string, object>>
+            {
+                new KeyValuePair<string, object>("status", "status-0"),
+                new KeyValuePair<string, object>("level", ""),
+                new KeyValuePair<string, object>("fld", "")
+            };
             virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);
             toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
         }
@@ -107,7 +112,10 @@ namespace SQLiteVirtualJustInTimeDemoGrid
         private void tBtestField_TextChanged(object sender, EventArgs e)
         {
             if (ignoreTextChanged ) return;
-            string[,] updateData = new string[1, 2] { { "testField", tBtestField.Text} };
+            List<KeyValuePair<string, object>> updateData = new List<KeyValuePair<string, object>>
+            {
+                new KeyValuePair<string, object>("testField", tBtestField.Text)
+            };
             virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);
             toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
         }

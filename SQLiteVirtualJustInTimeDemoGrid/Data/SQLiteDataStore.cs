@@ -147,14 +147,14 @@ namespace VirtualJustInTimeDemoGrid
             command.CommandText = String.Format("insert into {0} ({1}) values ({2});", tableName, String.Join(", ", insertFields), "'" + String.Join("', '", insertData) + "'");
             command.ExecuteNonQuery();
         }
-        public void UpdateSQLiteRow(string[,] updatePrms, int rowid)
+        public void UpdateSQLiteRow(List<KeyValuePair<string, object>> updatePrms, int rowid)
         {
             List<SQLiteParameter> prmsList = new List<SQLiteParameter>();
             List<string> updatePairs = new List<string>();
-            for (int i = 0; i < updatePrms.GetLength(0); i++)
+            foreach (var pair in updatePrms)
             {
-                prmsList.Add(new SQLiteParameter(String.Format("@{0}", updatePrms[i, 0]), updatePrms[i, 1]));
-                updatePairs.Add(String.Format("{0} = @{0} ", updatePrms[i, 0]));
+                updatePairs.Add(String.Format("{0} = @{0} ", pair.Key));
+                prmsList.Add(new SQLiteParameter(String.Format("@{0}", pair.Key), pair.Value));
             }
             command.CommandText = String.Format("update {0} set {1} WHERE rowid = {2};", tableName, String.Join(", ", updatePairs.ToArray()), rowid);
             command.Parameters.AddRange(prmsList.ToArray());

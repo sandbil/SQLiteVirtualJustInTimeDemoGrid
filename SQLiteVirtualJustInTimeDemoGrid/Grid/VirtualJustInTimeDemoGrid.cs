@@ -68,7 +68,7 @@ namespace VirtualJustInTimeDemoGrid
 
         }
 
-        public void UpdateCurRow(string[,] updatePrms)
+        public void UpdateCurRow(List<KeyValuePair<string, object>> updatePrms)
         {
             try
             {
