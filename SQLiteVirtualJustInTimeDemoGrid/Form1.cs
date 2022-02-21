@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,7 +20,8 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             InitializeComponent();
         }
 
-        private string connectionString = "Data Source = ..\\..\\db\\test.db";
+        private static string dbPath = "db";
+        private string connectionString = "Data Source = " + dbPath + "\\test.db";
         private string table = "table1";
         private string filterStr = null;
         private string[] fields = { "status", "level", "testField", "fld"  };
@@ -29,6 +31,8 @@ namespace SQLiteVirtualJustInTimeDemoGrid
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            if (!Directory.Exists(dbPath))
+                Directory.CreateDirectory(dbPath);
             SQLiteDataStore sqliteDS = new SQLiteDataStore(connectionString, table, fields, filterStr);
             sqliteDS.DropTable();
             sqliteDS.CreateTable();
