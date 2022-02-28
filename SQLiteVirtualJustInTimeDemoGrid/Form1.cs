@@ -61,6 +61,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
 
         private void virtualJustInTimeDemoGrid1_CurrentChanged(object sender, EventArgs e)
         {
+            Debug.WriteLine("(CurrentChanged) RowCount: " + virtualJustInTimeDemoGrid1.RowCount + ", " +  ", RowIndex: " + virtualJustInTimeDemoGrid1.CurrentRowIndex);
             int rowIndex = (int)virtualJustInTimeDemoGrid1.CurrentRowIndex;
             ignoreTextChanged = true;
             tBtestField.Text = virtualJustInTimeDemoGrid1.Rows[rowIndex].Cells[3].Value?.ToString();

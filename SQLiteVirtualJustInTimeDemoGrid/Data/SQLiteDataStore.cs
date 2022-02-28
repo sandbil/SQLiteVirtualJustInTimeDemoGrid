@@ -374,7 +374,15 @@ namespace VirtualJustInTimeDemoGrid
                 rowIndex >= cachePages[pageNumber].LowestIndex;
         }
 
-        public void RefreshPage(int rowIndex)
+        // Returns the number of the DataPage containing the given row index
+        public int PageNumRowCached(int rowIndex)
+        {
+            if (IsRowCachedInPage(0, rowIndex)) return 0;
+            if (IsRowCachedInPage(1, rowIndex)) return 1;
+            return -1;
+        }
+
+        public void RefreshPages(int rowIndex)
         {
             int usedPage = 0;
             if (IsRowCachedInPage(0, rowIndex))
@@ -385,6 +393,7 @@ namespace VirtualJustInTimeDemoGrid
                 return;
             DataTable table = dataSupply.SupplyPageOfData(cachePages[usedPage].LowestIndex, RowsPerPage);
             cachePages[usedPage] = new DataPage(table, cachePages[usedPage].LowestIndex);
+            cachePages[Math.Abs(usedPage - 1)] = new DataPage(table, cachePages[usedPage].LowestIndex);
             AllRowCount = dataSupply.RefreshRowCount();
         }
     }
