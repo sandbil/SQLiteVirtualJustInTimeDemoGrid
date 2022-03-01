@@ -39,11 +39,12 @@
             this.tsbDelete = new System.Windows.Forms.ToolStripButton();
             this.tsbUpdate = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.virtualJustInTimeDemoGrid1 = new VirtualJustInTimeDemoGrid.VirtualJustInTimeDemoGrid();
             this.tBFld = new System.Windows.Forms.TextBox();
             this.tBtestField = new System.Windows.Forms.TextBox();
             this.cmBoxStatus = new System.Windows.Forms.ComboBox();
             this.cmBoxLevel = new System.Windows.Forms.ComboBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.vmGrid1 = new VirtualJustInTimeDemoGrid.VirtualJustInTimeDemoGrid();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -148,7 +149,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.virtualJustInTimeDemoGrid1);
+            this.splitContainer1.Panel1.Controls.Add(this.vmGrid1);
             // 
             // splitContainer1.Panel2
             // 
@@ -157,15 +158,6 @@
             this.splitContainer1.Size = new System.Drawing.Size(1023, 398);
             this.splitContainer1.SplitterDistance = 785;
             this.splitContainer1.TabIndex = 4;
-            // 
-            // virtualJustInTimeDemoGrid1
-            // 
-            this.virtualJustInTimeDemoGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.virtualJustInTimeDemoGrid1.Location = new System.Drawing.Point(0, 0);
-            this.virtualJustInTimeDemoGrid1.Name = "virtualJustInTimeDemoGrid1";
-            this.virtualJustInTimeDemoGrid1.Size = new System.Drawing.Size(785, 398);
-            this.virtualJustInTimeDemoGrid1.TabIndex = 0;
-            this.virtualJustInTimeDemoGrid1.CurrentChanged += new System.EventHandler(this.virtualJustInTimeDemoGrid1_CurrentChanged);
             // 
             // tBFld
             // 
@@ -203,11 +195,31 @@
             this.cmBoxLevel.TabIndex = 6;
             this.cmBoxLevel.SelectionChangeCommitted += new System.EventHandler(this.cmBox_SelectionChangeCommited);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(418, 2);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(99, 23);
+            this.button1.TabIndex = 7;
+            this.button1.Text = "Export CSV";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // vmGrid1
+            // 
+            this.vmGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.vmGrid1.Location = new System.Drawing.Point(0, 0);
+            this.vmGrid1.Name = "vmGrid1";
+            this.vmGrid1.Size = new System.Drawing.Size(785, 398);
+            this.vmGrid1.TabIndex = 0;
+            this.vmGrid1.CurrentChanged += new System.EventHandler(this.virtualJustInTimeDemoGrid1_CurrentChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 450);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.cmBoxLevel);
             this.Controls.Add(this.cmBoxStatus);
             this.Controls.Add(this.splitContainer1);
@@ -241,11 +253,12 @@
         private System.Windows.Forms.ToolStripButton tsbDelete;
         private System.Windows.Forms.ToolStripButton tsbUpdate;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private VirtualJustInTimeDemoGrid.VirtualJustInTimeDemoGrid virtualJustInTimeDemoGrid1;
+        private VirtualJustInTimeDemoGrid.VirtualJustInTimeDemoGrid vmGrid1;
         private System.Windows.Forms.TextBox tBFld;
         private System.Windows.Forms.TextBox tBtestField;
         private System.Windows.Forms.ComboBox cmBoxStatus;
         private System.Windows.Forms.ComboBox cmBoxLevel;
+        private System.Windows.Forms.Button button1;
     }
 }
 

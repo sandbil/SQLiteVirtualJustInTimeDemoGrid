@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Data.SQLite;
-
+using System.IO;
+using System.Text;
 
 namespace VirtualJustInTimeDemoGrid
 {
@@ -26,7 +28,7 @@ namespace VirtualJustInTimeDemoGrid
             command = connection.CreateCommand();
             this.tableName = tableName;
             this.fields = fields;
-            this.fieldList = String.Join(",", fields);
+            this.fieldList = string.Join(",", fields);
             this.filterStr = filter ?? "";
         }
 
@@ -41,7 +43,7 @@ namespace VirtualJustInTimeDemoGrid
                 {
                     return rowCountValue;
                 }
-                command.CommandText = String.Format("SELECT COUNT(*) FROM {0} {1}", tableName, filterStr) ;
+                command.CommandText = $"SELECT COUNT(*) FROM {tableName} {filterStr}" ;
                 rowCountValue = Convert.ToInt32(command.ExecuteScalar());
                 return rowCountValue;
             }
@@ -49,7 +51,7 @@ namespace VirtualJustInTimeDemoGrid
 
         public int RefreshRowCount()
         {
-            command.CommandText = String.Format("SELECT COUNT(*) FROM {0} {1}", tableName, filterStr);
+            command.CommandText = $"SELECT COUNT(*) FROM {tableName} {filterStr}";
             rowCountValue = Convert.ToInt32(command.ExecuteScalar());
             return rowCountValue;
         }
@@ -120,7 +122,7 @@ namespace VirtualJustInTimeDemoGrid
             // Retrieve the specified number of rows from the database, starting
             // with the row specified by the lowerPageBoundary parameter.
 
-            command.CommandText = String.Format("SELECT rowid, {0} FROM {1} {2} LIMIT {3} OFFSET {4}", fieldList,  tableName, filterStr, rowsPerPage, lowerPageBoundary );
+            command.CommandText = $"SELECT rowid, {fieldList} FROM {tableName} {filterStr} LIMIT {rowsPerPage} OFFSET {lowerPageBoundary}";
 
             adapter.SelectCommand = command;
 
@@ -130,21 +132,86 @@ namespace VirtualJustInTimeDemoGrid
             return table;
         }
 
+        public DataTable PageOfDataForExport(int lowerPageBoundary, int rowsPerPage)
+        {
+            // Retrieve the specified number of rows from the database, starting
+            // with the row specified by the lowerPageBoundary parameter.
+
+            command.CommandText = $"SELECT {fieldList} FROM {tableName} {filterStr} LIMIT {rowsPerPage} OFFSET {lowerPageBoundary}";
+            adapter.SelectCommand = command;
+
+            DataTable table = new DataTable();
+            table.Locale = System.Globalization.CultureInfo.InvariantCulture;
+            adapter.Fill(table);
+            return table;
+        }
+
+        public int ExportToCSV(string[] fieldsForExport, string strFilePath, string encoding = "UTF-8", bool haveHeaders = false, int rowForExport = 10000)
+        {
+            int expRowCount = 0;
+            StreamWriter sw = new StreamWriter(strFilePath, true, Encoding.GetEncoding(encoding));
+            //headers  
+            if (haveHeaders)
+            {
+                sw.Write(string.Join(";", fieldsForExport));
+                sw.Write(sw.NewLine);
+            }
+
+            int pageCount = (int)Math.Ceiling((double)RowCount / rowForExport);
+            for (int i = 0; i < pageCount; i++)
+            {
+                command.CommandText = $"SELECT rowid, {fieldList} FROM {tableName} {filterStr} LIMIT {rowForExport} OFFSET {i * rowForExport}";
+                adapter.SelectCommand = command;
+                DataTable exportTable = new DataTable();
+                exportTable.Locale = System.Globalization.CultureInfo.InvariantCulture;
+                adapter.Fill(exportTable);
+                foreach (DataRow dr in exportTable.Rows)
+                {
+                    expRowCount++;
+                    for (int j = 0; j < exportTable.Columns.Count; j++)
+                    {
+                        if (!Convert.IsDBNull(dr[j]))
+                        {
+                            string value = dr[j].ToString();
+                            if (value.Contains(';'))
+                            {
+                                value = $"\"{value}\"";
+                                sw.Write(value);
+                            }
+                            else
+                            {
+                                sw.Write(dr[j].ToString());
+                            }
+                        }
+                        if (j < exportTable.Columns.Count - 1)
+                        {
+                            sw.Write(";");
+                        }
+                    }
+                    sw.Write(sw.NewLine);
+                }
+            }
+            sw.Close();
+            return expRowCount;
+        }
+
         public void CreateTable()
         {
-            command.CommandText = String.Format("CREATE TABLE IF NOT EXISTS {0} ({1});", tableName, String.Join(" text, ", fields) + " text");
+            string listFields = string.Join(" text, ", fields) + " text";
+            command.CommandText = $"CREATE TABLE IF NOT EXISTS {tableName} ({listFields});";
             command.ExecuteNonQuery();
         }
 
         public void DropTable()
         {
-            command.CommandText = String.Format("DROP TABLE IF EXISTS {0};", tableName) ;
+            command.CommandText = $"DROP TABLE IF EXISTS {tableName};" ;
             command.ExecuteNonQuery();
         }
         public void InsertSQLiteRow(string[] insertFields, string[] insertData)
         {
-
-            command.CommandText = String.Format("insert into {0} ({1}) values ({2});", tableName, String.Join(", ", insertFields), "'" + String.Join("', '", insertData) + "'");
+            string listFields = string.Join(", ", insertFields);
+            string listValues = $"'{string.Join("', '", insertData)}'";
+            command.CommandText = $"insert into {tableName} ({listFields}) values ({listValues});";
             command.ExecuteNonQuery();
         }
         public void UpdateSQLiteRow(List<KeyValuePair<string, object>> updateData, int rowid)
@@ -153,16 +220,16 @@ namespace VirtualJustInTimeDemoGrid
             List<string> lstUpdatePairs = new List<string>();
             foreach (var pair in updateData)
             {
-                lstUpdatePairs.Add(String.Format("{0} = @{0} ", pair.Key));
-                lstPrmsValue.Add(new SQLiteParameter(String.Format("@{0}", pair.Key), pair.Value));
+                lstUpdatePairs.Add($"{pair.Key} = @{pair.Key} ");
+                lstPrmsValue.Add(new SQLiteParameter($"@{pair.Key}", pair.Value));
             }
-            command.CommandText = String.Format("update {0} set {1} WHERE rowid = {2};", tableName, String.Join(", ", lstUpdatePairs.ToArray()), rowid);
+            command.CommandText = $"update {tableName} set {string.Join(", ", lstUpdatePairs.ToArray())} WHERE rowid = {rowid};";
             command.Parameters.AddRange(lstPrmsValue.ToArray());
             command.ExecuteNonQuery();
         }
         public void DeleteSQLiteRow(int rowid)
         {
-            command.CommandText = String.Format("DELETE FROM {0} WHERE rowid = {1};", tableName, rowid);
+            command.CommandText = $"DELETE FROM {tableName} WHERE rowid = {rowid};";
             command.ExecuteNonQuery();
         }
 
@@ -176,12 +243,12 @@ namespace VirtualJustInTimeDemoGrid
                 for (int i = 1; i <= 1000; i++)
                 {
                     for (int j = 0; j < fields.Length; j++)
-                        insertDataArray[j] = String.Format("{0}-{1}", fields[j], i);
+                        insertDataArray[j] = $"{fields[j]}-{i}";
                     if (status == 6)  status = 0;
-                    insertDataArray[0] = String.Format("{0}-{1}", fields[0], status);
+                    insertDataArray[0] = $"{fields[0]}-{status}";
 
                     if (level == 10) level = 0;
-                    insertDataArray[1] = String.Format("{0}-{1}", fields[1], level);
+                    insertDataArray[1] = $"{fields[1]}-{level}";
 
                     InsertSQLiteRow(fields, insertDataArray);
                     status++;

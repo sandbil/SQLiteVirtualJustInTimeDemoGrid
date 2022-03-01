@@ -23,7 +23,7 @@ namespace VirtualJustInTimeDemoGrid
             dataGridView1.Rows.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(this.DataGridViewRowCollection1_CollectionChanged);
         }
 
-        public int rowPerPage = 15;
+        public int rowPerPage = 60;
 
         private Cache memoryCache;
         private SQLiteDataStore sqliteDS;
@@ -31,7 +31,7 @@ namespace VirtualJustInTimeDemoGrid
         private string table;
         public string filter;
 
-        private Boolean ignore = false;
+        private bool ignore = false;
 
         public event EventHandler CurrentChanged;
 
@@ -58,16 +58,15 @@ namespace VirtualJustInTimeDemoGrid
                 dataGridView1.RowCount = sqliteDS.RowCount;
                 dataGridView1.Refresh();
                 ignore = false;
-                Debug.WriteLine("(Open after) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
+                Debug.WriteLine($"(Open after) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {dataGridView1.CurrentRow?.Index}");
             }
             catch (Exception ex)
             {
                 ignore = false;
-                Debug.WriteLine("Error (Open) " + ex.Message);
+                Debug.WriteLine($"Error (Open) {ex.Message}");
             }
 
         }
-
         public void UpdateCurRow(List<KeyValuePair<string, object>> updateData)
         {
             try
@@ -78,23 +77,38 @@ namespace VirtualJustInTimeDemoGrid
                 int curInd = (int) CurrentRowIndex;
                 sqliteDS.UpdateSQLiteRow(updateData, rowid);
                 memoryCache.RefreshPages(curInd);
-                Debug.WriteLine("(before update RowCount) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + curInd);
+                Debug.WriteLine($"(before update RowCount) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {curInd}");
+
                 dataGridView1.RowCount = memoryCache.AllRowCount;
                 dataGridView1.Refresh();
-                Debug.WriteLine("(after update) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + curInd);
+                Debug.WriteLine($"(after update RowCount) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {curInd}");
                 if (CurrentRowIndex != null)
                     CurrentChanged(dataGridView1, EventArgs.Empty); //! Force emit a CurrentChanged event
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Error (UpdateCurRow) " + ex.Message);
+                Debug.WriteLine($"Error (UpdateCurRow) {ex.Message}");
             }
 
         }
+        public int ExportCurData(string[] fieldsForExport, string strFilePath, string encoding = "UTF-8", bool haveHeaders = false, int rowForExport = 10000)
+        {
+            try
+            {
+                if (CurrentRowIndex == null || ignore) return 0;
+                int expRowCount = sqliteDS.ExportToCSV(fieldsForExport, strFilePath, encoding, haveHeaders, rowForExport);
+                return expRowCount;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error (ExportCurData) {ex.Message}");
+                return -1;
+            }
+        }
+
         private void dataGridView1_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             if (!IsCellValid(e.ColumnIndex, e.RowIndex) || memoryCache?.AllRowCount == 0) return;
-            //Debug.WriteLine("(before CellValueNeeded) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + e.RowIndex);
             e.Value = memoryCache.RetrieveElement(e.RowIndex, dataGridView1.Columns[e.ColumnIndex].Name);
         }
 
@@ -120,7 +134,7 @@ namespace VirtualJustInTimeDemoGrid
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             int pn = memoryCache.PageNumRowCached((int)dataGridView1.CurrentRow?.Index);
-            Debug.WriteLine("(SelectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index + ", Page: " + pn);
+            Debug.WriteLine($"(SelectionChanged) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {dataGridView1.CurrentRow?.Index}, Page: {pn}");
             if (CurrentRowIndex != null)
                 CurrentChanged(sender, e);
         }
@@ -140,7 +154,7 @@ namespace VirtualJustInTimeDemoGrid
                     int rowid = Convert.ToInt32(e.Row.Cells["rowid"].Value);
                     sqliteDS.DeleteSQLiteRow(rowid);
                     memoryCache.RefreshPages(e.Row.Index);
-                    Debug.WriteLine("(UserDeletingRow) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.Row.Index);
+                    Debug.WriteLine($"(UserDeletingRow) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {e.Row.Index}");
                 }
             }
             catch (Exception ex)
@@ -155,13 +169,13 @@ namespace VirtualJustInTimeDemoGrid
 
         private void DataGridViewRowCollection1_CollectionChanged(Object sender, CollectionChangeEventArgs e)
         {
-            Debug.WriteLine("(CollectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + e.Element);
+            Debug.WriteLine($"(CollectionChanged) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {e.Element}");
         }
 
         // for diagnostic purpose only
         private void dataGridView1_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
         {
-            Debug.WriteLine("(RowsRemoved) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + e.RowIndex);
+            Debug.WriteLine($"(RowsRemoved) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {e.RowIndex}");
         }
     }
 }

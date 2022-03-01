@@ -21,7 +21,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
         }
 
         private static string dbPath = "db";
-        private string connectionString = "Data Source = " + dbPath + "\\test.db";
+        private string connectionString = $"Data Source = {dbPath}\\test.db";
         private string table = "table1";
         private string filterStr = null;
         private string[] fields = { "status", "level", "testField", "fld"  };
@@ -37,18 +37,23 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             sqliteDS.DropTable();
             sqliteDS.CreateTable();
             sqliteDS.LoadTestData();
-            virtualJustInTimeDemoGrid1.AddColumns(fields);
-            virtualJustInTimeDemoGrid1.Open(connectionString, table, fields, filterStr);
-            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
+            vmGrid1.AddColumns(fields);
+            vmGrid1.Open(connectionString, table, fields, filterStr);
+            toolStripStatusLabel1.Text = $"total {vmGrid1.RowCount} rec";
 
             cmBoxLevel.Items.Add("All levels");
             for (int i = 0; i <= 9; i++)
-                cmBoxLevel.Items.Add(String.Format("level-{0}", i));
+            {
+                cmBoxLevel.Items.Add(item: $"level-{i}");
+            }
             cmBoxLevel.SelectedIndex = 0;
 
             cmBoxStatus.Items.Add("All statuses");
             for (int i = 0; i <= 8; i++)
-                cmBoxStatus.Items.Add(String.Format("status-{0}", i));
+            {
+                cmBoxStatus.Items.Add(item: $"status-{i}");
+            }
+
             cmBoxStatus.SelectedIndex = 0;
         }
 
@@ -61,39 +66,39 @@ namespace SQLiteVirtualJustInTimeDemoGrid
 
         private void virtualJustInTimeDemoGrid1_CurrentChanged(object sender, EventArgs e)
         {
-            int rowIndex = (int)virtualJustInTimeDemoGrid1.CurrentRowIndex;
+            int rowIndex = (int)vmGrid1.CurrentRowIndex;
             ignoreTextChanged = true;
-            tBtestField.Text = virtualJustInTimeDemoGrid1.Rows[rowIndex].Cells[3].Value?.ToString();
-            tBFld.Text = virtualJustInTimeDemoGrid1.Rows[rowIndex].Cells[4].Value?.ToString();
+            tBtestField.Text = vmGrid1.Rows[rowIndex].Cells[3].Value?.ToString();
+            tBFld.Text = vmGrid1.Rows[rowIndex].Cells[4].Value?.ToString();
             ignoreTextChanged = false;
 
         }
 
         private void tsbDelete_Click(object sender, EventArgs e)
         {
-            virtualJustInTimeDemoGrid1.Focus();
+            vmGrid1.Focus();
             SendKeys.Send("{DEL}");
-            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
+            toolStripStatusLabel1.Text = $"total {vmGrid1.RowCount} rec";
         }
 
         private void cmBox_SelectionChangeCommited(object sender, EventArgs e)
         {
             if (cmBoxStatus.SelectedIndex != 0)
-                filterStr = String.Format(" where status = '{0}'", cmBoxStatus.SelectedItem.ToString());
+                filterStr = $" where status = '{cmBoxStatus.SelectedItem.ToString()}'";
             else
                 filterStr = null;
 
             if (cmBoxLevel.SelectedIndex != 0)
             {
                 if (filterStr != null)
-                    filterStr += String.Format(" and level = '{0}'", cmBoxLevel.SelectedItem.ToString());
+                    filterStr += $" and level = '{cmBoxLevel.SelectedItem.ToString()}'";
                 else
-                    filterStr = String.Format(" where level = '{0}'", cmBoxLevel.SelectedItem.ToString());
+                    filterStr = $" where level = '{cmBoxLevel.SelectedItem.ToString()}'";
             }
 
-            virtualJustInTimeDemoGrid1.Open(connectionString, table, fields, filterStr);
-            virtualJustInTimeDemoGrid1.Focus();
-            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
+            vmGrid1.Open(connectionString, table, fields, filterStr);
+            vmGrid1.Focus();
+            toolStripStatusLabel1.Text = $"total {vmGrid1.RowCount} rec";
 
         }
 
@@ -105,8 +110,8 @@ namespace SQLiteVirtualJustInTimeDemoGrid
                 new KeyValuePair<string, object>("level", ""),
                 new KeyValuePair<string, object>("fld", "")
             };
-            virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);
-            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
+            vmGrid1.UpdateCurRow(updateData);
+            toolStripStatusLabel1.Text = $"total {vmGrid1.RowCount} rec";
         }
 
         private void tBtestField_TextChanged(object sender, EventArgs e)
@@ -116,8 +121,21 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             {
                 new KeyValuePair<string, object>("testField", tBtestField.Text)
             };
-            virtualJustInTimeDemoGrid1.UpdateCurRow(updateData);
-            toolStripStatusLabel1.Text = String.Format("total {0} rec", virtualJustInTimeDemoGrid1.RowCount);
+            vmGrid1.UpdateCurRow(updateData);
+            toolStripStatusLabel1.Text = $"total {vmGrid1.RowCount} rec";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (vmGrid1.RowCount <= 0) return;
+            string[] fieldsForExport = { "txtAdr", "etalGuid" };
+            DateTime date = DateTime.Now;
+            string date_str = date.ToString("yyyy-MM-dd_HH-mm-ss");
+            string strFilePath = $"{dbPath}\\test.db_{date_str}.csv";
+
+            int exported = vmGrid1.ExportCurData(fieldsForExport, strFilePath);
+            toolStripStatusLabel1.Text = $"exported {exported} rec";
+
         }
     }
 }
