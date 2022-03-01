@@ -68,7 +68,7 @@ namespace VirtualJustInTimeDemoGrid
 
         }
 
-        public void UpdateCurRow(List<KeyValuePair<string, object>> updateData)
+        public void UpdateCurRow(List<KeyValuePair<string, object>> updatePrms)
         {
             try
             {
@@ -76,8 +76,8 @@ namespace VirtualJustInTimeDemoGrid
                 
                 int rowid = Convert.ToInt32(dataGridView1.CurrentRow.Cells["rowid"].Value);
                 int curInd = (int) CurrentRowIndex;
-                sqliteDS.UpdateSQLiteRow(updateData, rowid);
-                memoryCache.RefreshPages(curInd);
+                sqliteDS.UpdateSQLiteRow(updatePrms, rowid);
+                memoryCache.RefreshPage(curInd);
                 Debug.WriteLine("(before update RowCount) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + curInd);
                 dataGridView1.RowCount = memoryCache.AllRowCount;
                 dataGridView1.Refresh();
@@ -95,7 +95,7 @@ namespace VirtualJustInTimeDemoGrid
         {
             if (!IsCellValid(e.ColumnIndex, e.RowIndex) || memoryCache?.AllRowCount == 0) return;
             //Debug.WriteLine("(before CellValueNeeded) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + e.RowIndex);
-            e.Value = memoryCache.RetrieveElement(e.RowIndex, dataGridView1.Columns[e.ColumnIndex].Name);
+            e.Value = memoryCache.RetrieveElement(e.RowIndex, e.ColumnIndex);
         }
 
         private bool IsCellValid(int columnIndex, int rowIndex)
@@ -119,8 +119,7 @@ namespace VirtualJustInTimeDemoGrid
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            int pn = memoryCache.PageNumRowCached((int)dataGridView1.CurrentRow?.Index);
-            Debug.WriteLine("(SelectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index + ", Page: " + pn);
+            Debug.WriteLine("(SelectionChanged) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + dataGridView1.CurrentRow?.Index);
             if (CurrentRowIndex != null)
                 CurrentChanged(sender, e);
         }
@@ -139,7 +138,7 @@ namespace VirtualJustInTimeDemoGrid
                 {
                     int rowid = Convert.ToInt32(e.Row.Cells["rowid"].Value);
                     sqliteDS.DeleteSQLiteRow(rowid);
-                    memoryCache.RefreshPages(e.Row.Index);
+                    memoryCache.RefreshPage(e.Row.Index);
                     Debug.WriteLine("(UserDeletingRow) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache.AllRowCount + ", RowIndex: " + e.Row.Index);
                 }
             }
