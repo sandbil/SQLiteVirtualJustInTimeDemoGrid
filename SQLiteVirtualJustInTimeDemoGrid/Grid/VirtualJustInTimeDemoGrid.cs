@@ -68,7 +68,7 @@ namespace VirtualJustInTimeDemoGrid
 
         }
 
-        public void UpdateCurRow(List<KeyValuePair<string, object>> updatePrms)
+        public void UpdateCurRow(List<KeyValuePair<string, object>> updateData)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace VirtualJustInTimeDemoGrid
                 
                 int rowid = Convert.ToInt32(dataGridView1.CurrentRow.Cells["rowid"].Value);
                 int curInd = (int) CurrentRowIndex;
-                sqliteDS.UpdateSQLiteRow(updatePrms, rowid);
+                sqliteDS.UpdateSQLiteRow(updateData, rowid);
                 memoryCache.RefreshPage(curInd);
                 Debug.WriteLine("(before update RowCount) RowCount: " + RowCount + ", " + "DataCount: " + memoryCache?.AllRowCount + ", RowIndex: " + curInd);
                 dataGridView1.RowCount = memoryCache.AllRowCount;

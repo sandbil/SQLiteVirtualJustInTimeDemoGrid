@@ -147,17 +147,17 @@ namespace VirtualJustInTimeDemoGrid
             command.CommandText = String.Format("insert into {0} ({1}) values ({2});", tableName, String.Join(", ", insertFields), "'" + String.Join("', '", insertData) + "'");
             command.ExecuteNonQuery();
         }
-        public void UpdateSQLiteRow(List<KeyValuePair<string, object>> updatePrms, int rowid)
+        public void UpdateSQLiteRow(List<KeyValuePair<string, object>> updateData, int rowid)
         {
-            List<SQLiteParameter> prmsList = new List<SQLiteParameter>();
-            List<string> updatePairs = new List<string>();
-            foreach (var pair in updatePrms)
+            List<SQLiteParameter> lstPrmsValue = new List<SQLiteParameter>();
+            List<string> lstUpdatePairs = new List<string>();
+            foreach (var pair in updateData)
             {
-                updatePairs.Add(String.Format("{0} = @{0} ", pair.Key));
-                prmsList.Add(new SQLiteParameter(String.Format("@{0}", pair.Key), pair.Value));
+                lstUpdatePairs.Add(String.Format("{0} = @{0} ", pair.Key));
+                lstPrmsValue.Add(new SQLiteParameter(String.Format("@{0}", pair.Key), pair.Value));
             }
-            command.CommandText = String.Format("update {0} set {1} WHERE rowid = {2};", tableName, String.Join(", ", updatePairs.ToArray()), rowid);
-            command.Parameters.AddRange(prmsList.ToArray());
+            command.CommandText = String.Format("update {0} set {1} WHERE rowid = {2};", tableName, String.Join(", ", lstUpdatePairs.ToArray()), rowid);
+            command.Parameters.AddRange(lstPrmsValue.ToArray());
             command.ExecuteNonQuery();
         }
         public void DeleteSQLiteRow(int rowid)
