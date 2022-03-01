@@ -96,6 +96,7 @@ namespace VirtualJustInTimeDemoGrid
             try
             {
                 if (CurrentRowIndex == null || ignore) return 0;
+                
                 int expRowCount = sqliteDS.ExportToCSV(fieldsForExport, strFilePath, encoding, haveHeaders, rowForExport);
                 return expRowCount;
             }

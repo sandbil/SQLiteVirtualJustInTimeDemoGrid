@@ -157,17 +157,17 @@ namespace VirtualJustInTimeDemoGrid
                 sw.Write(sw.NewLine);
             }
 
+            string fieldListForExport = string.Join(",", fieldsForExport);
             int pageCount = (int)Math.Ceiling((double)RowCount / rowForExport);
             for (int i = 0; i < pageCount; i++)
             {
-                command.CommandText = $"SELECT rowid, {fieldList} FROM {tableName} {filterStr} LIMIT {rowForExport} OFFSET {i * rowForExport}";
+                command.CommandText = $"SELECT {fieldListForExport} FROM {tableName} {filterStr} LIMIT {rowForExport} OFFSET {i * rowForExport}";
                 adapter.SelectCommand = command;
                 DataTable exportTable = new DataTable();
                 exportTable.Locale = System.Globalization.CultureInfo.InvariantCulture;
                 adapter.Fill(exportTable);
                 foreach (DataRow dr in exportTable.Rows)
                 {
-                    expRowCount++;
                     for (int j = 0; j < exportTable.Columns.Count; j++)
                     {
                         if (!Convert.IsDBNull(dr[j]))
@@ -188,6 +188,7 @@ namespace VirtualJustInTimeDemoGrid
                             sw.Write(";");
                         }
                     }
+                    expRowCount++;
                     sw.Write(sw.NewLine);
                 }
             }

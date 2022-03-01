@@ -128,7 +128,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
         private void button1_Click(object sender, EventArgs e)
         {
             if (vmGrid1.RowCount <= 0) return;
-            string[] fieldsForExport = { "txtAdr", "etalGuid" };
+            string[] fieldsForExport = { "status", "level", "testField" };
             DateTime date = DateTime.Now;
             string date_str = date.ToString("yyyy-MM-dd_HH-mm-ss");
             string strFilePath = $"{dbPath}\\test.db_{date_str}.csv";
