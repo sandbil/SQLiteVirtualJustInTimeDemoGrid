@@ -58,7 +58,7 @@ namespace VirtualJustInTimeDemoGrid
                 dataGridView1.RowCount = sqliteDS.RowCount;
                 dataGridView1.Refresh();
                 ignore = false;
-                Debug.WriteLine($"(Open after) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {dataGridView1.CurrentRow?.Index}");
+                Debug.WriteLine($"(Open after) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {CurrentRowIndex}");
             }
             catch (Exception ex)
             {
@@ -134,10 +134,16 @@ namespace VirtualJustInTimeDemoGrid
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            int pn = memoryCache.PageNumRowCached((int)dataGridView1.CurrentRow?.Index);
-            Debug.WriteLine($"(SelectionChanged) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}, RowIndex: {dataGridView1.CurrentRow?.Index}, Page: {pn}");
+            Debug.Write($"(SelectionChanged) RowCount: {RowCount}, DataCount: {memoryCache?.AllRowCount}");
             if (CurrentRowIndex != null)
+            {
+                int pn = memoryCache.PageNumRowCached((int)CurrentRowIndex);
+                Debug.WriteLine($", RowIndex: {CurrentRowIndex}, Page: {pn}");
                 CurrentChanged(sender, e);
+            }
+
+                
+
         }
 
         private void dataGridView1_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)

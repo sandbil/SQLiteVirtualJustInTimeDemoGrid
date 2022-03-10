@@ -40,10 +40,10 @@
             this.tsbUpdate = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tBFld = new System.Windows.Forms.TextBox();
-            this.tBtestField = new System.Windows.Forms.TextBox();
             this.cmBoxStatus = new System.Windows.Forms.ComboBox();
             this.cmBoxLevel = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.rtbTestField = new System.Windows.Forms.RichTextBox();
             this.vmGrid1 = new VirtualJustInTimeDemoGrid.VirtualJustInTimeDemoGrid();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -153,8 +153,8 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.rtbTestField);
             this.splitContainer1.Panel2.Controls.Add(this.tBFld);
-            this.splitContainer1.Panel2.Controls.Add(this.tBtestField);
             this.splitContainer1.Size = new System.Drawing.Size(1023, 398);
             this.splitContainer1.SplitterDistance = 785;
             this.splitContainer1.TabIndex = 4;
@@ -166,14 +166,6 @@
             this.tBFld.ReadOnly = true;
             this.tBFld.Size = new System.Drawing.Size(210, 22);
             this.tBFld.TabIndex = 1;
-            // 
-            // tBtestField
-            // 
-            this.tBtestField.Location = new System.Drawing.Point(12, 28);
-            this.tBtestField.Name = "tBtestField";
-            this.tBtestField.Size = new System.Drawing.Size(210, 22);
-            this.tBtestField.TabIndex = 0;
-            this.tBtestField.TextChanged += new System.EventHandler(this.tBtestField_TextChanged);
             // 
             // cmBoxStatus
             // 
@@ -204,6 +196,15 @@
             this.button1.Text = "Export CSV";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // rtbTestField
+            // 
+            this.rtbTestField.Location = new System.Drawing.Point(12, 14);
+            this.rtbTestField.Name = "rtbTestField";
+            this.rtbTestField.Size = new System.Drawing.Size(210, 40);
+            this.rtbTestField.TabIndex = 2;
+            this.rtbTestField.Text = "";
+            this.rtbTestField.TextChanged += new System.EventHandler(this.rtbTestField_TextChanged);
             // 
             // vmGrid1
             // 
@@ -255,10 +256,10 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private VirtualJustInTimeDemoGrid.VirtualJustInTimeDemoGrid vmGrid1;
         private System.Windows.Forms.TextBox tBFld;
-        private System.Windows.Forms.TextBox tBtestField;
         private System.Windows.Forms.ComboBox cmBoxStatus;
         private System.Windows.Forms.ComboBox cmBoxLevel;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.RichTextBox rtbTestField;
     }
 }
 

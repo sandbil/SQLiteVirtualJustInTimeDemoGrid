@@ -15,17 +15,25 @@ namespace SQLiteVirtualJustInTimeDemoGrid
 {
     public partial class Form1 : Form
     {
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
         private static string dbPath = "db";
         private string connectionString = $"Data Source = {dbPath}\\test.db";
         private string table = "table1";
         private string filterStr = null;
-        private string[] fields = { "status", "level", "testField", "fld"  };
-        Boolean ignoreTextChanged = false;
+        //private string[,] fields = {{ "status", "int","vsbl" }, { "level", "int", "vsbl" }, { "testField", "string", "vsbl" }, { "fld", "string", "vsbl" }};
+        private string[] fields = { "status", "level", "testField", "fld"};
+        bool ignoreTextChanged = false;
+        private Timer timer;
+
+        public Form1()
+        {
+            InitializeComponent();
+            timer = new Timer();
+            timer.Interval = 250;
+            timer.Tick += DoDelayedUpdate;
+        }
+
+        
+
 
 
 
@@ -68,7 +76,9 @@ namespace SQLiteVirtualJustInTimeDemoGrid
         {
             int rowIndex = (int)vmGrid1.CurrentRowIndex;
             ignoreTextChanged = true;
-            tBtestField.Text = vmGrid1.Rows[rowIndex].Cells[3].Value?.ToString();
+            string testFieldText = vmGrid1.Rows[rowIndex].Cells[3].Value?.ToString();
+            if (rtbTestField.Text != testFieldText)
+                rtbTestField.Text = testFieldText;
             tBFld.Text = vmGrid1.Rows[rowIndex].Cells[4].Value?.ToString();
             ignoreTextChanged = false;
 
@@ -119,7 +129,7 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             if (ignoreTextChanged ) return;
             List<KeyValuePair<string, object>> updateData = new List<KeyValuePair<string, object>>
             {
-                new KeyValuePair<string, object>("testField", tBtestField.Text)
+                new KeyValuePair<string, object>("testField", rtbTestField.Text)
             };
             vmGrid1.UpdateCurRow(updateData);
             toolStripStatusLabel1.Text = $"total {vmGrid1.RowCount} rec";
@@ -136,6 +146,26 @@ namespace SQLiteVirtualJustInTimeDemoGrid
             int exported = vmGrid1.ExportCurData(fieldsForExport, strFilePath);
             toolStripStatusLabel1.Text = $"exported {exported} rec";
 
+        }
+
+        private void rtbTestField_TextChanged(object sender, EventArgs e)
+        {
+            if (ignoreTextChanged) return;
+
+            timer.Stop();
+            timer.Start();
+        }
+
+        private void DoDelayedUpdate(object sender, EventArgs e)
+        {
+            // Do here what you wanted to do in TextChanged;
+            List<KeyValuePair<string, object>> updateData = new List<KeyValuePair<string, object>>
+            {
+                new KeyValuePair<string, object>("testField", rtbTestField.Text)
+            };
+            vmGrid1.UpdateCurRow(updateData);
+            toolStripStatusLabel1.Text = $"total {vmGrid1.RowCount} rec";
+            timer.Stop();  // This line must be here, at the end of the method
         }
     }
 }
